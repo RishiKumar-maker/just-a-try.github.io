@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0e0a" />
+<title>Modern Combat: Arena 3D</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="app">
+
+  <canvas id="scene"></canvas>
+  <canvas id="minimap"></canvas>
+
+  <div id="hud" class="hidden">
+    <div id="crosshair">
+      <span class="ch ch-top"></span><span class="ch ch-bottom"></span>
+      <span class="ch ch-left"></span><span class="ch ch-right"></span>
+      <span class="ch-dot"></span>
+    </div>
+    <div id="scope-mask" class="hidden"><div class="scope-circle"></div></div>
+
+    <div id="hitmarker"></div>
+    <div id="vignette-damage"></div>
+    <div id="smoke-overlay"></div>
+
+    <div id="killfeed"></div>
+
+    <div id="topbar">
+      <div id="scorepanel" class="panel">
+        <span class="label">KILLS</span><span id="statKills">0</span>
+        <span class="divider">/</span>
+        <span class="label">DEATHS</span><span id="statDeaths">0</span>
+      </div>
+      <div id="timerpanel" class="panel">
+        <span id="matchTimer">00:00</span>
+      </div>
+      <div id="diffbadge" class="panel">NORMAL</div>
+    </div>
+
+    <div id="bottombar">
+      <div id="healthpanel" class="panel corner-clip">
+        <div class="panel-icon health-icon"></div>
+        <div class="bar-wrap">
+          <div class="bar-track"><div id="healthBar" class="bar-fill health"></div></div>
+          <span id="healthValue">100</span>
+        </div>
+      </div>
+
+      <div id="weaponpanel" class="panel corner-clip">
+        <div class="ammo-wrap">
+          <span id="ammoMag">30</span><span class="ammo-sep">/</span><span id="ammoReserve">120</span>
+        </div>
+        <div id="weaponName">ASSAULT RIFLE</div>
+        <div id="smokeCount">SMOKE x3</div>
+      </div>
+
+      <div id="scoreboard-hint" class="panel">TAB · SCOREBOARD</div>
+    </div>
+
+    <div id="reload-indicator" class="hidden">RELOADING</div>
+    <div id="spawnProtected" class="hidden">SPAWN PROTECTED</div>
+    <div id="deathscreen" class="hidden">
+      <div class="death-title">ELIMINATED</div>
+      <div id="respawnCountdown">RESPAWNING IN 3</div>
+    </div>
+  </div>
+
+  <div id="scoreboard" class="hidden">
+    <h2>SCOREBOARD</h2>
+    <table>
+      <thead><tr><th>NAME</th><th>KILLS</th><th>DEATHS</th></tr></thead>
+      <tbody id="scoreboardBody"></tbody>
+    </table>
+  </div>
+
+  <div id="mainmenu" class="screen">
+    <div class="menu-bg-fx"></div>
+    <div class="menu-content">
+      <div class="eyebrow">TACTICAL ARENA COMBAT · OFFLINE · REAL 3D</div>
+      <h1 class="title">MODERN COMBAT<span class="title-accent">: ARENA</span></h1>
+      <p class="tagline">Free-for-all respawn arena in a true 3D compound. Jump, peek, and frag bots.</p>
+
+      <div class="menu-section">
+        <div class="section-label">01 // SELECT DIFFICULTY</div>
+        <div class="diff-options" id="diffOptions">
+          <button class="diff-btn" data-diff="easy">
+            <span class="diff-name">EASY</span>
+            <span class="diff-desc">4 bots · slow reflexes</span>
+          </button>
+          <button class="diff-btn selected" data-diff="normal">
+            <span class="diff-name">NORMAL</span>
+            <span class="diff-desc">6 bots · balanced</span>
+          </button>
+          <button class="diff-btn" data-diff="hard">
+            <span class="diff-name">HARD</span>
+            <span class="diff-desc">9 bots · sharp aim</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <div class="section-label">02 // LOADOUT</div>
+        <div class="loadout-row">
+          <span class="loadout-item">RIFLE</span>
+          <span class="loadout-item">SMG</span>
+          <span class="loadout-item">SHOTGUN</span>
+          <span class="loadout-item">SNIPER</span>
+          <span class="loadout-item">SMOKE x3</span>
+        </div>
+      </div>
+
+      <button id="startBtn" class="start-btn">START MATCH</button>
+
+      <button id="controlsToggle" class="link-btn">CONTROLS &amp; KEYBINDS</button>
+      <div id="controlsPanel" class="controls-panel hidden">
+        <div class="ctrl-row"><span>MOVE</span><span>W A S D</span></div>
+        <div class="ctrl-row"><span>LOOK</span><span>MOUSE</span></div>
+        <div class="ctrl-row"><span>SPRINT</span><span>SHIFT</span></div>
+        <div class="ctrl-row"><span>JUMP</span><span>SPACE</span></div>
+        <div class="ctrl-row"><span>PEEK / LEAN</span><span>Q / E</span></div>
+        <div class="ctrl-row"><span>FIRE</span><span>LEFT CLICK</span></div>
+        <div class="ctrl-row"><span>AIM / SCOPE</span><span>RIGHT CLICK</span></div>
+        <div class="ctrl-row"><span>RELOAD</span><span>R</span></div>
+        <div class="ctrl-row"><span>SWITCH WEAPON</span><span>1-4 / SCROLL</span></div>
+        <div class="ctrl-row"><span>THROW SMOKE</span><span>G</span></div>
+        <div class="ctrl-row"><span>SCOREBOARD</span><span>TAB</span></div>
+        <div class="ctrl-row"><span>PAUSE</span><span>ESC</span></div>
+      </div>
+
+      <div class="install-hint">Install this page as an app (Chrome menu &rarr; Install) to play fully offline in its own window. Requires WebGL — any Chromebook from the last several years supports it.</div>
+    </div>
+  </div>
+
+  <div id="pausemenu" class="screen hidden">
+    <div class="menu-content narrow">
+      <h2 class="pause-title">PAUSED</h2>
+      <button id="resumeBtn" class="start-btn">RESUME</button>
+      <button id="restartBtn" class="secondary-btn">RESTART MATCH</button>
+      <button id="quitBtn" class="secondary-btn">QUIT TO MENU</button>
+    </div>
+  </div>
+
+  <div id="summaryscreen" class="screen hidden">
+    <div class="menu-content narrow">
+      <div class="section-label">MATCH SUMMARY</div>
+      <div class="summary-stats">
+        <div class="summary-stat"><span id="sumKills">0</span><label>KILLS</label></div>
+        <div class="summary-stat"><span id="sumDeaths">0</span><label>DEATHS</label></div>
+        <div class="summary-stat"><span id="sumKD">0.0</span><label>K/D</label></div>
+        <div class="summary-stat"><span id="sumTime">00:00</span><label>TIME</label></div>
+      </div>
+      <button id="backToMenuBtn" class="start-btn">BACK TO MENU</button>
+    </div>
+  </div>
+
+  <div id="webglfail" class="screen hidden">
+    <div class="menu-content narrow">
+      <h2 class="pause-title">WEBGL UNAVAILABLE</h2>
+      <p class="tagline">This device or browser can't run WebGL, which this 3D build requires. Try updating Chrome or enabling hardware acceleration in chrome://settings.</p>
+    </div>
+  </div>
+
+</div>
+
+<script src="bundle.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "Modern Combat: Arena 3D",
+  "short_name": "MC: Arena 3D",
+  "description": "Offline 3D arena FPS with jump, peek, bots, and modern weapons.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#0a0e0a",
+  "theme_color": "#0a0e0a",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
